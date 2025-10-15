@@ -1,10 +1,10 @@
-name: Build sing-box mipsle
+name: Build AdGuardHome mipsle
 
 on:
   workflow_dispatch:
   push:
     tags:
-      - "v*"
+      - "adgh-*"
 
 jobs:
   build:
@@ -20,27 +20,27 @@ jobs:
         sudo tar -C /usr/local -xzf go1.22.5.linux-amd64.tar.gz
         echo "/usr/local/go/bin" >> $GITHUB_PATH
 
-    - name: Build sing-box (mipsle softfloat slim)
+    - name: Build AdGuardHome (mipsle softfloat slim)
       run: |
-        git clone https://github.com/SagerNet/sing-box.git
-        cd sing-box
+        git clone https://github.com/AdguardTeam/AdGuardHome.git
+        cd AdGuardHome
         export GOOS=linux
         export GOARCH=mipsle
         export GOMIPS=softfloat
         export CGO_ENABLED=0
-        go build -trimpath -ldflags="-s -w" -o sing-box ./cmd/sing-box
-        mv sing-box ../sing-box-mipsle
+        go build -trimpath -ldflags="-s -w" -o AdGuardHome ./cmd/AdGuardHome
+        mv AdGuardHome ../AdGuardHome-mipsle
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: sing-box-mipsle
-        path: sing-box-mipsle
+        name: AdGuardHome-mipsle
+        path: AdGuardHome-mipsle
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: sing-box-mipsle
+        files: AdGuardHome-mipsle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
