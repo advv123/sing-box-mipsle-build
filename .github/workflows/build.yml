@@ -2,6 +2,9 @@ name: Build sing-box mipsle
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -17,14 +20,15 @@ jobs:
         sudo tar -C /usr/local -xzf go1.22.5.linux-amd64.tar.gz
         echo "/usr/local/go/bin" >> $GITHUB_PATH
 
-    - name: Build sing-box (mipsle softfloat)
+    - name: Build sing-box (mipsle softfloat slim)
       run: |
         git clone https://github.com/SagerNet/sing-box.git
         cd sing-box
         export GOOS=linux
         export GOARCH=mipsle
         export GOMIPS=softfloat
-        go build -o sing-box ./cmd/sing-box
+        export CGO_ENABLED=0
+        go build -trimpath -ldflags="-s -w" -o sing-box ./cmd/sing-box
         mv sing-box ../sing-box-mipsle
 
     - name: Upload artifact
@@ -32,3 +36,11 @@ jobs:
       with:
         name: sing-box-mipsle
         path: sing-box-mipsle
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: sing-box-mipsle
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
