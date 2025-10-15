@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install Go
       run: |
@@ -28,7 +28,7 @@ jobs:
         mv sing-box ../sing-box-mipsle
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sing-box-mipsle
         path: sing-box-mipsle
