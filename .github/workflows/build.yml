@@ -28,7 +28,8 @@ jobs:
         export GOARCH=mipsle
         export GOMIPS=softfloat
         export CGO_ENABLED=0
-        go build -trimpath -ldflags="-s -w" -o AdGuardHome ./cmd/AdGuardHome
+        # AdGuardHome 没有 cmd/ 子目录，直接在根目录编译
+        go build -trimpath -ldflags="-s -w" -o AdGuardHome
         mv AdGuardHome ../AdGuardHome-mipsle
 
     - name: Upload artifact
